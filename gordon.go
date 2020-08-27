@@ -17,10 +17,14 @@ type shareValueParams struct {
 }
 
 func (p shareValueParams) calculate() decimal.Decimal {
-	discountRate := p.riskFreeRate.Add(p.volatility.Mul(p.historicalRisk))
-	shareValue := p.nextYearDividend.Div(discountRate.Sub(p.growthRate))
+	shareValue := p.nextYearDividend.Div(p.discountRate().Sub(p.growthRate))
 
 	return shareValue
+}
+
+func (p shareValueParams) discountRate() decimal.Decimal {
+	discountRate := p.riskFreeRate.Add(p.volatility.Mul(p.historicalRisk))
+	return discountRate
 }
 
 func (p shareValueParams) test() {

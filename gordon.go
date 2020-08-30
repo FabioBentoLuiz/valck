@@ -9,17 +9,26 @@ import (
 )
 
 type shareValueParams struct {
-	nextYearDividend decimal.Decimal
-	growthRate       decimal.Decimal
-	riskFreeRate     decimal.Decimal
-	volatility       decimal.Decimal
-	historicalRisk   decimal.Decimal
+	lastQuarterDividend      decimal.Decimal
+	nextYearDividendIncrease decimal.Decimal
+	growthRate               decimal.Decimal
+	riskFreeRate             decimal.Decimal
+	volatility               decimal.Decimal
+	historicalRisk           decimal.Decimal
 }
 
-func (p shareValueParams) calculate() decimal.Decimal {
-	shareValue := p.nextYearDividend.Div(p.discountRate().Sub(p.growthRate))
-
+func (p shareValueParams) calculateShareValue() decimal.Decimal {
+	fmt.Println("Dividend next year:", p.nextYearDividend())
+	fmt.Println("Discount rate:", p.discountRate())
+	fmt.Println("Grouth rate:", p.growthRate)
+	shareValue := p.nextYearDividend().Div(p.discountRate().Sub(p.growthRate))
 	return shareValue
+}
+
+func (p shareValueParams) nextYearDividend() decimal.Decimal {
+	quarters := decimal.NewFromInt(4)
+	nextYearDividend := p.lastQuarterDividend.Mul(p.nextYearDividendIncrease).Mul(quarters)
+	return nextYearDividend
 }
 
 func (p shareValueParams) discountRate() decimal.Decimal {
